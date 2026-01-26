@@ -5,10 +5,35 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
+[contracts.sip-010-trait]
+path = 'contracts/sip-010-trait.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.access-control]
+path = 'contracts/access-control.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.treasury]
+path = 'contracts/treasury.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.stream-math]
+path = 'contracts/stream-math.clar'
+clarity_version = 2
+epoch = 2.5
+
+[contracts.emergency-controls]
+path = 'contracts/emergency-controls.clar'
+clarity_version = 2
+epoch = 2.5
+
 [contracts.blockpay]
 path = 'contracts/blockpay.clar'
-clarity_version = 4
-epoch = 'latest'
+clarity_version = 2
+epoch = 2.5
 [repl.analysis]
 passes = [
     'call_checker',
