@@ -9,7 +9,7 @@
 (define-constant ERR_UNAUTHORIZED (err u4000))
 (define-constant ERR_ALREADY_PAUSED (err u4001))
 (define-constant ERR_NOT_PAUSED (err u4002))
-(define-constant ERR_EMERGENCY_MODE_ACTIVE (err u4003))sip-010-trait
+(define-constant ERR_EMERGENCY_MODE_ACTIVE (err u4003))
 (define-constant ERR_COOLDOWN_ACTIVE (err u4004))
 
 ;; ============================================
