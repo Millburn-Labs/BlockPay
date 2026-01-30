@@ -15,7 +15,6 @@ export {
   AnchorMode,
   PostConditionMode,
   FungibleConditionCode,
-  ClarityValue,
   uintCV,
   principalCV,
   stringAsciiCV,
@@ -27,4 +26,6 @@ export {
   contractPrincipalCV,
   standardPrincipalCV,
 } from '@stacks/transactions';
-export { StacksNetwork, StacksTestnet, StacksMainnet } from '@stacks/network';
+export type { ClarityValue } from '@stacks/transactions';
+export type { StacksNetwork } from '@stacks/network';
+export { createNetwork } from '@stacks/network';

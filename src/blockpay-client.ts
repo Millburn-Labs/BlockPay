@@ -8,10 +8,7 @@
 import {
   AnchorMode,
   PostConditionMode,
-  broadcastTransaction,
   makeContractCall,
-  makeStandardSTXPostCondition,
-  FungibleConditionCode,
   ClarityValue,
   uintCV,
   principalCV,
@@ -21,30 +18,21 @@ import {
   noneCV,
   listCV,
   boolCV,
-  contractPrincipalCV,
-  standardPrincipalCV,
-  getAddressFromPrivateKey,
-  TransactionVersion,
-  NetworkVersion,
 } from '@stacks/transactions';
 import {
   openContractCall,
-  openSTXTransfer,
   UserSession,
-  showConnect,
   AppConfig,
 } from '@stacks/connect';
-import { StacksNetwork, StacksTestnet, StacksMainnet } from '@stacks/network';
+import { StacksNetwork, createNetwork } from '@stacks/network';
 
 // Network configuration
 export const NETWORK_CONFIG = {
   testnet: {
-    network: StacksTestnet,
-    version: TransactionVersion.Testnet,
+    network: createNetwork('testnet'),
   },
   mainnet: {
-    network: StacksMainnet,
-    version: TransactionVersion.Mainnet,
+    network: createNetwork('mainnet'),
   },
 };
 
@@ -65,13 +53,8 @@ export const DEFAULT_CONTRACT_ADDRESSES: ContractAddresses = {
 };
 
 // App configuration for Stacks Connect
-export const APP_CONFIG: AppConfig = {
-  appDetails: {
-    name: 'BlockPay',
-    icon: 'https://blockpay.io/icon.png',
-  },
+export const APP_CONFIG: Partial<AppConfig> = {
   redirectTo: '/',
-  userSession: undefined, // Will be set by the app
 };
 
 /**
@@ -86,11 +69,11 @@ export class BlockPayClient {
   constructor(
     network: 'testnet' | 'mainnet' = 'testnet',
     contractAddresses: ContractAddresses = DEFAULT_CONTRACT_ADDRESSES,
-    appConfig: AppConfig = APP_CONFIG
+    appConfig: Partial<AppConfig> = APP_CONFIG
   ) {
     this.network = NETWORK_CONFIG[network].network;
     this.contractAddresses = contractAddresses;
-    this.appConfig = appConfig;
+    this.appConfig = appConfig as AppConfig;
   }
 
   /**
@@ -104,7 +87,7 @@ export class BlockPayClient {
    * Update app configuration
    */
   setAppConfig(config: Partial<AppConfig>) {
-    this.appConfig = { ...this.appConfig, ...config };
+    this.appConfig = { ...this.appConfig, ...config } as AppConfig;
   }
 
   // ============================================
@@ -127,7 +110,6 @@ export class BlockPayClient {
         functionName: 'deposit-stx',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Transaction submitted:', data.txId);
         },
@@ -156,9 +138,7 @@ export class BlockPayClient {
   /**
    * Get employer STX balance
    */
-  async getEmployerSTXBalance(employerAddress: string): Promise<ClarityValue> {
-    const [address, contractName] = this.contractAddresses.treasury.split('.');
-    
+  async getEmployerSTXBalance(_employerAddress: string): Promise<ClarityValue> {
     // This would typically be a read-only call via API
     // For now, return a placeholder
     return uintCV(0);
@@ -183,7 +163,6 @@ export class BlockPayClient {
         functionName: 'add-admin',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Admin added:', data.txId);
         },
@@ -220,7 +199,6 @@ export class BlockPayClient {
         functionName: 'add-employer',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Employer added:', data.txId);
         },
@@ -278,7 +256,6 @@ export class BlockPayClient {
         functionName: 'create-stream',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Stream created:', data.txId);
         },
@@ -315,7 +292,6 @@ export class BlockPayClient {
         functionName: 'withdraw',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Withdrawal successful:', data.txId);
         },
@@ -356,7 +332,6 @@ export class BlockPayClient {
         functionName: 'extend-stream',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Stream extended:', data.txId);
         },
@@ -397,7 +372,6 @@ export class BlockPayClient {
         functionName: 'increase-stream-amount',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Stream amount increased:', data.txId);
         },
@@ -434,7 +408,6 @@ export class BlockPayClient {
         functionName: 'cancel-stream',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Stream cancelled:', data.txId);
         },
@@ -488,7 +461,6 @@ export class BlockPayClient {
         functionName: 'batch-create-streams',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Streams created:', data.txId);
         },
@@ -534,7 +506,6 @@ export class BlockPayClient {
         functionName: 'add-bonus',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Bonus added:', data.txId);
         },
@@ -573,7 +544,6 @@ export class BlockPayClient {
         functionName: 'pause-system',
         functionArgs: [],
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('System paused:', data.txId);
         },
@@ -608,7 +578,6 @@ export class BlockPayClient {
         functionName: 'unpause-system',
         functionArgs: [],
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('System unpaused:', data.txId);
         },
@@ -645,7 +614,6 @@ export class BlockPayClient {
         functionName: 'pause-stream',
         functionArgs,
         network: this.network,
-        appDetails: this.appConfig.appDetails,
         onFinish: (data) => {
           console.log('Stream paused:', data.txId);
         },
