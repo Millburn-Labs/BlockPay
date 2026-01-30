@@ -30,6 +30,9 @@ BlockPay is a sophisticated, production-ready decentralized payroll system that 
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Security](#security)
+- [API Reference](#api-reference)
+- [Suggested Future Enhancements](#suggested-future-enhancements)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -358,6 +361,130 @@ clarinet deployments apply --mainnet
 
 *Note: Costs vary based on network congestion*
 
+## API Reference
+
+### BlockPay Contract Functions
+
+#### Stream Management
+- `create-stream` - Create a new salary stream with vesting
+- `withdraw` - Withdraw earned amount from a stream
+- `extend-stream` - Extend stream duration (if modifiable)
+- `increase-stream-amount` - Increase stream total amount (if modifiable)
+- `cancel-stream` - Cancel a stream and refund unvested amount
+- `batch-create-streams` - Create multiple streams in one transaction
+- `add-bonus` - Pay a one-time bonus to an employee
+
+#### Read-Only Queries
+- `get-stream` - Get stream details by ID
+- `get-employer-streams` - Get all stream IDs for an employer
+- `get-employee-streams` - Get all stream IDs for an employee
+- `get-earned-amount` - Calculate earned amount for a stream
+- `get-withdrawable-amount` - Get withdrawable amount for a stream
+- `get-remaining-amount` - Get remaining amount in a stream
+- `get-stream-status` - Get current status of a stream
+- `get-stream-modifications` - Get modification history for a stream
+- `get-next-stream-id` - Get the next available stream ID
+- `get-total-streams-created` - Get total number of streams created
+
+### Treasury Contract Functions
+
+#### Deposits & Withdrawals
+- `deposit-stx` - Deposit STX to employer balance
+- `deposit-token` - Deposit SIP-010 tokens to employer balance
+- `withdraw-stx` - Withdraw STX (whitelisted contracts only)
+- `withdraw-token` - Withdraw tokens (whitelisted contracts only)
+
+#### Read-Only Queries
+- `get-employer-stx-balance` - Get employer's STX balance
+- `get-employer-token-balance` - Get employer's token balance
+- `get-total-stx-deposits` - Get total STX deposited
+- `get-total-stx-withdrawals` - Get total STX withdrawn
+- `get-withdrawal-history` - Get withdrawal audit trail
+
+### Access Control Functions
+
+- `add-admin` - Add an admin (owner only)
+- `remove-admin` - Remove an admin (owner only)
+- `add-employer` - Add an employer (owner/admin)
+- `remove-employer` - Remove an employer (owner/admin)
+- `is-employer` - Check if principal is an employer
+- `is-admin` - Check if principal is an admin
+
+### Emergency Controls Functions
+
+- `pause-system` - Pause entire system (admin only)
+- `unpause-system` - Unpause system (admin only)
+- `pause-stream` - Pause a specific stream (admin only)
+- `unpause-stream` - Unpause a specific stream (admin only)
+- `enable-emergency-mode` - Enable emergency mode (admin only)
+- `disable-emergency-mode` - Disable emergency mode (owner only)
+
+## Suggested Future Enhancements
+
+The following functions can be added to the contract without breaking existing functionality. These are read-only queries and new public functions that extend capabilities:
+
+### Analytics & Reporting
+
+**Employee Analytics:**
+- `get-employee-total-earned` - Total earned across all streams
+- `get-employee-total-withdrawable` - Total withdrawable across all active streams
+- `get-employee-total-withdrawn` - Total withdrawn across all streams
+- `get-employee-active-streams-count` - Count of active streams for an employee
+
+**Employer Analytics:**
+- `get-employer-total-committed` - Sum of all active stream amounts
+- `get-employer-total-paid` - Total paid to all employees
+- `get-employer-active-streams-count` - Count of active streams
+- `get-employer-streams-by-status` - Filter streams by status (active/completed/cancelled)
+
+**Global Analytics:**
+- `get-average-stream-duration` - Average duration of all streams
+- `get-average-stream-amount` - Average amount per stream
+
+### Enhanced Stream Queries
+
+- `get-streams-by-status` - Get all streams with a specific status
+- `get-streams-expiring-soon` - Streams expiring within X blocks
+- `get-streams-with-low-balance` - Streams with < X% remaining
+- `get-stream-progress` - Returns percentage complete (0-100)
+
+### Batch Operations
+
+- `batch-withdraw` - Withdraw from multiple streams in one transaction
+- `get-batch-withdrawable` - Get total withdrawable from multiple streams
+
+### Stream Health & Monitoring
+
+- `get-streams-needing-attention` - Returns streams that are:
+  - Expiring soon (< 144 blocks)
+  - Low balance (< 10% remaining)
+  - No withdrawals in last 1000 blocks
+- `get-stream-last-activity` - Block height of last withdrawal or modification
+
+### Metadata Management
+
+- `update-stream-metadata` - Update stream metadata (if `can-modify` is true)
+
+### Financial Summaries
+
+- `get-employer-financial-summary` - Returns:
+  - Total committed
+  - Total paid
+  - Active streams count
+  - Pending withdrawals estimate
+- `get-employee-financial-summary` - Returns:
+  - Total earned
+  - Total withdrawn
+  - Total withdrawable
+  - Active streams count
+
+### Time-Based Queries
+
+- `get-streams-created-since` - Streams created after a specific block
+- `get-streams-completed-since` - Streams completed after a specific block
+
+*Note: These features are suggestions and have not been implemented yet. They are designed to be non-breaking additions to the existing contract.*
+
 ## Development
 
 ### Project Structure
@@ -390,14 +517,24 @@ BlockPay/
 
 ## Roadmap
 
+### Short-term (Q1-Q2)
+- **Analytics & Reporting**: Implement employee and employer analytics functions
+- **Batch Withdrawals**: Allow employees to withdraw from multiple streams at once
+- **Stream Health Monitoring**: Add functions to identify streams needing attention
+- **Enhanced Queries**: Add filtering and search capabilities for streams
+
+### Medium-term (Q3-Q4)
 - Multi-signature employer accounts
 - Automated tax withholding
-- DeFi integration for yield generation
-- Mobile app for easy withdrawals
-- Analytics dashboard
 - Recurring bonus schedules
 - Performance-based variable rates
+- Mobile app for easy withdrawals
+
+### Long-term
+- DeFi integration for yield generation
+- Analytics dashboard (off-chain)
 - Cross-chain bridge support
+- Multi-currency payroll support
 
 ## Contributing
 

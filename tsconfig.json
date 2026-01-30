@@ -5,6 +5,7 @@
     "module": "ESNext",
     "lib": ["ESNext"],
     "skipLibCheck": true,
+    "jsx": "react-jsx",
 
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -20,6 +21,7 @@
   },
   "include": [
     "node_modules/@stacks/clarinet-sdk/vitest-helpers/src",
-    "tests"
+    "tests",
+    "src"
   ]
 }
