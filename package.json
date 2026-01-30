@@ -1,7 +1,7 @@
 {
   "name": "BlockPay-tests",
   "version": "1.0.0",
-  "description": "Run unit tests on this project.",
+  "description": "BlockPay - Decentralized Payroll Streaming on Stacks with @stacks/connect and @stacks/transactions integration",
   "type": "module",
   "private": true,
   "scripts": {
@@ -19,5 +19,8 @@
     "chokidar-cli": "^3.0.0",
     "vitest": "^4.0.7",
     "vitest-environment-clarinet": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0"
   }
 }
