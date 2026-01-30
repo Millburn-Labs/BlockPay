@@ -6,8 +6,7 @@
  */
 
 import { BlockPayClient, DEFAULT_CONTRACT_ADDRESSES } from '../blockpay-client';
-import { UserSession, AppConfig } from '@stacks/connect';
-import { StacksTestnet } from '@stacks/network';
+import { UserSession } from '@stacks/connect';
 
 // Initialize the client
 const client = new BlockPayClient('testnet', DEFAULT_CONTRACT_ADDRESSES);

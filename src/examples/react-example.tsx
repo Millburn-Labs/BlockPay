@@ -10,19 +10,12 @@ import {
   UserSession,
   AppConfig,
   showConnect,
-  openContractCall,
 } from '@stacks/connect';
-import { StacksTestnet } from '@stacks/network';
 import { BlockPayClient, DEFAULT_CONTRACT_ADDRESSES } from '../blockpay-client';
 
 // App configuration
-const appConfig: AppConfig = {
-  appDetails: {
-    name: 'BlockPay',
-    icon: 'https://blockpay.io/icon.png',
-  },
+const appConfig: Partial<AppConfig> = {
   redirectTo: '/',
-  userSession: undefined,
 };
 
 // Initialize user session
@@ -48,7 +41,6 @@ export const BlockPayExample: React.FC = () => {
 
   const handleConnect = async () => {
     await showConnect({
-      appDetails: appConfig.appDetails,
       redirectTo: '/',
       onFinish: () => {
         setIsSignedIn(true);
