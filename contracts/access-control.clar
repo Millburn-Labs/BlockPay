@@ -116,9 +116,51 @@
 ;; Public Functions - Owner Management
 ;; ============================================
 
-(define-public (set-owner (new-owner principal))
+(define-public (propose-new-owner (new-owner principal))
     (begin
         (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (asserts! (not (is-eq new-owner tx-sender)) ERR_CANNOT_REMOVE_SELF)
+        (asserts! (is-none (get-pending-role-change new-owner ROLE_OWNER)) ERR_TIMELOCK_ACTIVE)
+        
+        (map-set pending-role-changes
+            { target: new-owner, role: ROLE_OWNER }
+            { proposer: tx-sender, action: "grant", proposed-at: block-height }
+        )
+        (ok true)
+    )
+)
+
+(define-public (accept-ownership)
+    (let
+        (
+            (pending (unwrap! (get-pending-role-change tx-sender ROLE_OWNER) ERR_NOT_FOUND))
+            (proposed-at (get proposed-at pending))
+        )
+        (asserts! (>= block-height (+ proposed-at TIMELOCK_BLOCKS)) ERR_TIMELOCK_NOT_READY)
+        
+        ;; Transfer ownership
+        (var-set contract-owner tx-sender)
+        
+        ;; Clean up pending change
+        (map-delete pending-role-changes { target: tx-sender, role: ROLE_OWNER })
+        (add-to-history tx-sender ROLE_OWNER "grant")
+        (ok true)
+    )
+)
+
+(define-public (cancel-ownership-transfer)
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        ;; Allow owner to cancel any pending ownership transfer
+        (map-delete pending-role-changes { target: tx-sender, role: ROLE_OWNER })
+        (ok true)
+    )
+)
+
+(define-public (emergency-set-owner (new-owner principal))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (asserts! (var-get emergency-paused) ERR_UNAUTHORIZED) ;; Only when emergency paused
         (asserts! (not (is-eq new-owner tx-sender)) ERR_CANNOT_REMOVE_SELF)
         (var-set contract-owner new-owner)
         (add-to-history new-owner ROLE_OWNER "grant")
